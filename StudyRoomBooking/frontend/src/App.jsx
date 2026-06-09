@@ -23,6 +23,7 @@ import AdminCalendar from "./pages/admin/AdminCalendar";
 import AdminMaintenance from "./pages/admin/AdminMaintenance";
 import AdminPasswordRequests from "./pages/admin/AdminPasswordRequests";
 import AdminProfile from "./pages/admin/AdminProfile";
+import AdminSupport from "./pages/admin/AdminSupport";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -163,6 +164,15 @@ function App() {
                     element={
                         <ProtectedRoute requiredRole="admin">
                             <AdminPasswordRequests />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/support"
+                    element={
+                        <ProtectedRoute requiredRole="admin">
+                            <AdminSupport />
                         </ProtectedRoute>
                     }
                 />

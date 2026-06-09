@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import StudentSupportChat from "../components/StudentSupportChat";
 import { getMyBookings } from "../services/bookingService";
 import { getRooms } from "../services/roomService";
 
@@ -494,6 +495,7 @@ function StudentHome() {
                     </div>
                 </section>
             </div>
+            <StudentSupportChat />
             <Footer />
         </>
     );

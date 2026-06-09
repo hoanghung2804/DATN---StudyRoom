@@ -148,6 +148,12 @@ function Navbar() {
                                 </li>
 
                                 <li className="nav-item">
+                                    <Link className="nav-link" to="/admin/support" onClick={closeMenu}>
+                                        Hỗ trợ
+                                    </Link>
+                                </li>
+
+                                <li className="nav-item">
                                     <Link className="nav-link" to="/admin/profile" onClick={closeMenu}>
                                         Hồ sơ
                                     </Link>

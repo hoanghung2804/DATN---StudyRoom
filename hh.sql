@@ -6,6 +6,8 @@ USE study_room_booking;
 
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS room_reviews;
+DROP TABLE IF EXISTS support_messages;
+DROP TABLE IF EXISTS support_threads;
 DROP TABLE IF EXISTS maintenance_schedules;
 DROP TABLE IF EXISTS password_reset_requests;
 DROP TABLE IF EXISTS notifications;
@@ -116,6 +118,35 @@ CREATE TABLE room_reviews (
     CONSTRAINT fk_room_reviews_room FOREIGN KEY (room_id) REFERENCES rooms(id),
     CONSTRAINT fk_room_reviews_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT chk_room_reviews_rating CHECK (rating BETWEEN 1 AND 5)
+);
+
+CREATE TABLE support_threads (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    assigned_admin_id INT NULL,
+    subject VARCHAR(255) NOT NULL,
+    category ENUM('booking','checkin','maintenance','account','other') DEFAULT 'other',
+    status ENUM('open','pending','closed') DEFAULT 'open',
+    last_message_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_support_threads_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_support_threads_admin FOREIGN KEY (assigned_admin_id) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_support_threads_user_status (user_id, status),
+    INDEX idx_support_threads_status_last_message (status, last_message_at)
+);
+
+CREATE TABLE support_messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    thread_id INT NOT NULL,
+    sender_id INT NOT NULL,
+    sender_role ENUM('student','admin') NOT NULL,
+    message TEXT NOT NULL,
+    is_read TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_support_messages_thread FOREIGN KEY (thread_id) REFERENCES support_threads(id) ON DELETE CASCADE,
+    CONSTRAINT fk_support_messages_sender FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_support_messages_thread_created (thread_id, created_at)
 );
 
 INSERT INTO users (fullname, email, password, role)

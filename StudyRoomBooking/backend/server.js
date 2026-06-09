@@ -23,6 +23,9 @@ const maintenanceRoutes =
 const userRoutes =
     require("./routes/userRoutes");
 
+const supportRoutes =
+    require("./routes/supportRoutes");
+
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
@@ -39,6 +42,10 @@ app.use(
 app.use(
     "/api/users",
     userRoutes
+);
+app.use(
+    "/api/support",
+    supportRoutes
 );
 
 // Test
