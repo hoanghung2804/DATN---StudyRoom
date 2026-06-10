@@ -84,7 +84,7 @@ function ForgotPassword() {
                             className="form-control"
                             type="email"
                             name="email"
-                            placeholder="student@gmail.com"
+                            placeholder="Nhập email tài khoản"
                             value={form.email}
                             onChange={handleChange}
                             required

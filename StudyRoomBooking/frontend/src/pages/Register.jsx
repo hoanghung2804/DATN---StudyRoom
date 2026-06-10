@@ -75,7 +75,7 @@ function Register() {
                         <label className="form-label">Email</label>
                         <input
                             className="form-control"
-                            placeholder="student@gmail.com"
+                            placeholder="Nhập email sinh viên"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required

@@ -128,7 +128,7 @@ function Login() {
                         <label className="form-label">Email</label>
                         <input
                             className="form-control"
-                            placeholder="admin@gmail.com"
+                            placeholder="Nhập email của bạn"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
