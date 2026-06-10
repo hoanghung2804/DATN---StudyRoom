@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getUnreadNotificationCount } from "../services/notificationService";
+import { getAdminSupportUnreadCount } from "../services/supportService";
 
 const roleLabel = {
     admin: "Quản trị viên",
@@ -10,6 +11,7 @@ const roleLabel = {
 function Navbar() {
     const navigate = useNavigate();
     const [unreadCount, setUnreadCount] = useState(0);
+    const [supportUnreadCount, setSupportUnreadCount] = useState(0);
     const [menuOpen, setMenuOpen] = useState(false);
     const [currentUser, setCurrentUser] = useState(
         JSON.parse(localStorage.getItem("user") || "null")
@@ -61,6 +63,36 @@ function Navbar() {
         };
     }, [userId, isAdmin]);
 
+    useEffect(() => {
+        if (!userId || !isAdmin) {
+            return;
+        }
+
+        let ignore = false;
+
+        const loadSupportUnreadCount = () => {
+            getAdminSupportUnreadCount()
+                .then((res) => {
+                    if (!ignore) {
+                        setSupportUnreadCount(res.data.total || 0);
+                    }
+                })
+                .catch(() => {
+                    if (!ignore) {
+                        setSupportUnreadCount(0);
+                    }
+                });
+        };
+
+        loadSupportUnreadCount();
+        const timer = window.setInterval(loadSupportUnreadCount, 15000);
+
+        return () => {
+            ignore = true;
+            window.clearInterval(timer);
+        };
+    }, [userId, isAdmin]);
+
     const closeMenu = () => {
         setMenuOpen(false);
     };
@@ -74,6 +106,7 @@ function Navbar() {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         setCurrentUser(null);
+        setSupportUnreadCount(0);
         closeMenu();
         navigate("/");
     };
@@ -150,6 +183,11 @@ function Navbar() {
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/admin/support" onClick={closeMenu}>
                                         Hỗ trợ
+                                        {supportUnreadCount > 0 && (
+                                            <span className="badge bg-danger ms-2">
+                                                {supportUnreadCount}
+                                            </span>
+                                        )}
                                     </Link>
                                 </li>
 

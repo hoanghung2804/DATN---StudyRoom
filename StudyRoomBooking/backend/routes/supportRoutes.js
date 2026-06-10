@@ -33,6 +33,12 @@ router.get(
     supportController.getAdminThreads
 );
 
+router.get(
+    "/admin/unread-count",
+    isAdmin,
+    supportController.getAdminUnreadCount
+);
+
 router.patch(
     "/admin/threads/:id/status",
     isAdmin,

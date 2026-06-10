@@ -293,6 +293,33 @@ exports.getAdminThreads = (req, res) => {
     );
 };
 
+// NOTE: Chuc nang chinh - Dem hoi thoai co tin moi tu sinh vien can admin xu ly.
+exports.getAdminUnreadCount = (req, res) => {
+    db.query(
+        `
+            SELECT COUNT(*) AS total
+            FROM support_threads
+            JOIN support_messages AS latest
+                ON latest.id = (
+                    SELECT id
+                    FROM support_messages
+                    WHERE thread_id = support_threads.id
+                    ORDER BY created_at DESC, id DESC
+                    LIMIT 1
+                )
+            WHERE support_threads.status <> 'closed'
+            AND latest.sender_role = 'student'
+        `,
+        (err, result) => {
+            if (err) {
+                return res.status(500).json({ message: err.message });
+            }
+
+            return res.json({ total: result[0]?.total || 0 });
+        }
+    );
+};
+
 // NOTE: Chuc nang chinh - Admin cap nhat trang thai hoi thoai.
 exports.updateThreadStatus = (req, res) => {
     const threadId = req.params.id;

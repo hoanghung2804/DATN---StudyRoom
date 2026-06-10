@@ -2817,6 +2817,26 @@ a {
     max-height: 440px;
 }
 
+.support-admin-messages .support-message.admin {
+    align-self: flex-end;
+    text-align: right;
+}
+
+.support-admin-messages .support-message.admin div {
+    background: #2563eb;
+    color: #fff;
+}
+
+.support-admin-messages .support-message.student {
+    align-self: flex-start;
+    text-align: left;
+}
+
+.support-admin-messages .support-message.student div {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
 @media (max-width: 992px) {
     .support-admin-layout,
     .support-admin-summary,

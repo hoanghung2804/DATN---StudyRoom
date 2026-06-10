@@ -27,6 +27,10 @@ export const getAdminSupportThreads = (params = {}) => {
     });
 };
 
+export const getAdminSupportUnreadCount = () => {
+    return axiosClient.get("/support/admin/unread-count");
+};
+
 export const updateSupportThreadStatus = (threadId, status) => {
     return axiosClient.patch(
         `/support/admin/threads/${threadId}/status`,
