@@ -45,6 +45,28 @@ exports.getMyThread = (req, res) => {
     );
 };
 
+// NOTE: Chuc nang chinh - Dem so tin admin da phan hoi nhung sinh vien chua doc.
+exports.getMyUnreadCount = (req, res) => {
+    db.query(
+        `
+            SELECT COUNT(*) AS total
+            FROM support_messages
+            JOIN support_threads ON support_threads.id = support_messages.thread_id
+            WHERE support_threads.user_id = ?
+            AND support_messages.sender_role = 'admin'
+            AND support_messages.is_read = 0
+        `,
+        [req.user.id],
+        (err, result) => {
+            if (err) {
+                return res.status(500).json({ message: err.message });
+            }
+
+            return res.json({ total: result[0]?.total || 0 });
+        }
+    );
+};
+
 // NOTE: Chuc nang chinh - Sinh vien tao hoi thoai moi va gui tin nhan dau tien.
 exports.createThread = (req, res) => {
     const {
@@ -139,6 +161,20 @@ exports.getMessages = (req, res) => {
                 (messageErr, messages) => {
                     if (messageErr) {
                         return res.status(500).json({ message: messageErr.message });
+                    }
+
+                    if (req.user.role !== "admin") {
+                        db.query(
+                            `
+                                UPDATE support_messages
+                                SET is_read = 1
+                                WHERE thread_id = ?
+                                AND sender_role = 'admin'
+                                AND is_read = 0
+                            `,
+                            [threadId],
+                            () => {}
+                        );
                     }
 
                     return res.json({

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
     createSupportThread,
     getMySupportThread,
+    getMySupportUnreadCount,
     getSupportMessages,
     sendSupportMessage
 } from "../services/supportService";
@@ -50,6 +51,7 @@ function StudentSupportChat() {
     const [messages, setMessages] = useState([]);
     const [text, setText] = useState("");
     const [error, setError] = useState("");
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const token = localStorage.getItem("token");
     const isLoggedIn = Boolean(token);
@@ -71,8 +73,39 @@ function StudentSupportChat() {
         const res = await getSupportMessages(threadId);
         setThread(res.data.thread);
         setMessages(res.data.messages || []);
+        setUnreadCount(0);
         scrollToBottom();
     };
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            return;
+        }
+
+        let ignore = false;
+
+        const loadUnreadCount = () => {
+            getMySupportUnreadCount()
+                .then((res) => {
+                    if (!ignore) {
+                        setUnreadCount(res.data.total || 0);
+                    }
+                })
+                .catch(() => {
+                    if (!ignore) {
+                        setUnreadCount(0);
+                    }
+                });
+        };
+
+        loadUnreadCount();
+        const timer = window.setInterval(loadUnreadCount, 15000);
+
+        return () => {
+            ignore = true;
+            window.clearInterval(timer);
+        };
+    }, [isLoggedIn]);
 
     useEffect(() => {
         if (!open || !isLoggedIn) {
@@ -93,6 +126,7 @@ function StudentSupportChat() {
                     if (!ignore) {
                         setThread(messageRes.data.thread);
                         setMessages(messageRes.data.messages || []);
+                        setUnreadCount(0);
                         scrollToBottom();
                     }
                 }
@@ -118,6 +152,7 @@ function StudentSupportChat() {
                 .then((res) => {
                     setThread(res.data.thread);
                     setMessages(res.data.messages || []);
+                    setUnreadCount(0);
                     scrollToBottom();
                 })
                 .catch(() => {});
@@ -272,6 +307,11 @@ function StudentSupportChat() {
 
             <button className="support-toggle" type="button" onClick={() => setOpen((current) => !current)}>
                 <span>{open ? "Đóng" : "Hỗ trợ"}</span>
+                {!open && unreadCount > 0 && (
+                    <span className="support-toggle-badge">
+                        {unreadCount}
+                    </span>
+                )}
                 {!open && <strong>?</strong>}
             </button>
         </div>

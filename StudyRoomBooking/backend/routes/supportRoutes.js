@@ -12,6 +12,11 @@ router.get(
     supportController.getMyThread
 );
 
+router.get(
+    "/my-unread-count",
+    supportController.getMyUnreadCount
+);
+
 router.post(
     "/threads",
     supportController.createThread

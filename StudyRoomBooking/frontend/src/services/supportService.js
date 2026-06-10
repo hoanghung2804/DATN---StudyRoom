@@ -4,6 +4,10 @@ export const getMySupportThread = () => {
     return axiosClient.get("/support/my-thread");
 };
 
+export const getMySupportUnreadCount = () => {
+    return axiosClient.get("/support/my-unread-count");
+};
+
 export const createSupportThread = (data) => {
     return axiosClient.post("/support/threads", data);
 };

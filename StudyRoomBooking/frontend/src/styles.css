@@ -2523,6 +2523,20 @@ a {
     background: rgba(255, 255, 255, 0.2);
 }
 
+.support-toggle-badge {
+    display: grid;
+    min-width: 24px;
+    height: 24px;
+    place-items: center;
+    border: 2px solid #fff;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
 .support-panel {
     width: min(380px, calc(100vw - 32px));
     overflow: hidden;
