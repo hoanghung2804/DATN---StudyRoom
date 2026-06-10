@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { forgotPassword } from "../services/authService";
+import {
+    STUDENT_PASSWORD_HINT,
+    validateStudentPassword
+} from "../utils/passwordPolicy";
 
 function ForgotPassword() {
     const [form, setForm] = useState({
@@ -33,6 +37,17 @@ function ForgotPassword() {
             setMessage({
                 type: "danger",
                 text: "Mật khẩu xác nhận không khớp."
+            });
+            setLoading(false);
+            return;
+        }
+
+        const passwordError = validateStudentPassword(form.newPassword);
+
+        if (passwordError) {
+            setMessage({
+                type: "danger",
+                text: passwordError
             });
             setLoading(false);
             return;
@@ -97,11 +112,13 @@ function ForgotPassword() {
                             className="form-control"
                             type="password"
                             name="newPassword"
-                            placeholder="Tối thiểu 6 ký tự"
+                            placeholder="Ví dụ: Student@123"
                             value={form.newPassword}
                             onChange={handleChange}
+                            minLength={8}
                             required
                         />
+                        <div className="form-text text-white-50">{STUDENT_PASSWORD_HINT}</div>
                     </div>
 
                     <div className="mb-3">

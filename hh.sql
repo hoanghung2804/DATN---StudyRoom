@@ -152,16 +152,16 @@ CREATE TABLE support_messages (
 INSERT INTO users (fullname, email, password, role)
 VALUES
 ('Administrator', 'admin@gmail.com', '123456', 'admin'),
-('Vo Ngoc Hoang Hung', 'hungn28@gmail.com', '123456', 'student'),
-('Tran Thi B', 'b@gmail.com', '123456', 'student'),
-('Le Van C', 'c@gmail.com', '123456', 'student'),
-('Pham Thi D', 'd@gmail.com', '123456', 'student'),
-('Hoang Van E', 'e@gmail.com', '123456', 'student'),
-('Vo Thi F', 'f@gmail.com', '123456', 'student'),
-('Dang Van G', 'g@gmail.com', '123456', 'student'),
-('Bui Thi H', 'h@gmail.com', '123456', 'student'),
-('Do Van I', 'i@gmail.com', '123456', 'student'),
-('Nguyen Thi Kieu', 'k@gmail.com', '123456', 'student');
+('Vo Ngoc Hoang Hung', 'hungn28@gmail.com', 'Student@123', 'student'),
+('Tran Thi B', 'b@gmail.com', 'Student@123', 'student'),
+('Le Van C', 'c@gmail.com', 'Student@123', 'student'),
+('Pham Thi D', 'd@gmail.com', 'Student@123', 'student'),
+('Hoang Van E', 'e@gmail.com', 'Student@123', 'student'),
+('Vo Thi F', 'f@gmail.com', 'Student@123', 'student'),
+('Dang Van G', 'g@gmail.com', 'Student@123', 'student'),
+('Bui Thi H', 'h@gmail.com', 'Student@123', 'student'),
+('Do Van I', 'i@gmail.com', 'Student@123', 'student'),
+('Nguyen Thi Kieu', 'k@gmail.com', 'Student@123', 'student');
 
 INSERT INTO rooms
 (room_name, capacity, description, status, building, floor, room_type, equipment, image_url)
@@ -214,26 +214,26 @@ VALUES
 -- Demo data for testing student/admin workflows
 INSERT INTO users (fullname, email, password, role)
 VALUES
-('Nguyễn Minh Anh', 'sv001.studyroom@gmail.com', '123456', 'student'),
-('Trần Thị Bảo Ngọc', 'sv002.studyroom@gmail.com', '123456', 'student'),
-('Lê Hoàng Phúc', 'sv003.studyroom@gmail.com', '123456', 'student'),
-('Phạm Gia Hân', 'sv004.studyroom@gmail.com', '123456', 'student'),
-('Huỳnh Quốc Bảo', 'sv005.studyroom@gmail.com', '123456', 'student'),
-('Võ Thảo Vy', 'sv006.studyroom@gmail.com', '123456', 'student'),
-('Đặng Tuấn Kiệt', 'sv007.studyroom@gmail.com', '123456', 'student'),
-('Bùi Khánh Linh', 'sv008.studyroom@gmail.com', '123456', 'student'),
-('Đỗ Nhật Nam', 'sv009.studyroom@gmail.com', '123456', 'student'),
-('Ngô Phương Thảo', 'sv010.studyroom@gmail.com', '123456', 'student'),
-('Hồ Đức Anh', 'sv011.studyroom@gmail.com', '123456', 'student'),
-('Mai Thanh Trúc', 'sv012.studyroom@gmail.com', '123456', 'student'),
-('Cao Minh Quân', 'sv013.studyroom@gmail.com', '123456', 'student'),
-('Lâm Ngọc Mai', 'sv014.studyroom@gmail.com', '123456', 'student'),
-('Dương Hải Đăng', 'sv015.studyroom@gmail.com', '123456', 'student'),
-('Tạ Hồng Nhung', 'sv016.studyroom@gmail.com', '123456', 'student'),
-('Phan Nhật Minh', 'sv017.studyroom@gmail.com', '123456', 'student'),
-('Vũ Mỹ Duyên', 'sv018.studyroom@gmail.com', '123456', 'student'),
-('Châu Thành Đạt', 'sv019.studyroom@gmail.com', '123456', 'student'),
-('Đinh Yến Nhi', 'sv020.studyroom@gmail.com', '123456', 'student');
+('Nguyễn Minh Anh', 'sv001.studyroom@gmail.com', 'Student@123', 'student'),
+('Trần Thị Bảo Ngọc', 'sv002.studyroom@gmail.com', 'Student@123', 'student'),
+('Lê Hoàng Phúc', 'sv003.studyroom@gmail.com', 'Student@123', 'student'),
+('Phạm Gia Hân', 'sv004.studyroom@gmail.com', 'Student@123', 'student'),
+('Huỳnh Quốc Bảo', 'sv005.studyroom@gmail.com', 'Student@123', 'student'),
+('Võ Thảo Vy', 'sv006.studyroom@gmail.com', 'Student@123', 'student'),
+('Đặng Tuấn Kiệt', 'sv007.studyroom@gmail.com', 'Student@123', 'student'),
+('Bùi Khánh Linh', 'sv008.studyroom@gmail.com', 'Student@123', 'student'),
+('Đỗ Nhật Nam', 'sv009.studyroom@gmail.com', 'Student@123', 'student'),
+('Ngô Phương Thảo', 'sv010.studyroom@gmail.com', 'Student@123', 'student'),
+('Hồ Đức Anh', 'sv011.studyroom@gmail.com', 'Student@123', 'student'),
+('Mai Thanh Trúc', 'sv012.studyroom@gmail.com', 'Student@123', 'student'),
+('Cao Minh Quân', 'sv013.studyroom@gmail.com', 'Student@123', 'student'),
+('Lâm Ngọc Mai', 'sv014.studyroom@gmail.com', 'Student@123', 'student'),
+('Dương Hải Đăng', 'sv015.studyroom@gmail.com', 'Student@123', 'student'),
+('Tạ Hồng Nhung', 'sv016.studyroom@gmail.com', 'Student@123', 'student'),
+('Phan Nhật Minh', 'sv017.studyroom@gmail.com', 'Student@123', 'student'),
+('Vũ Mỹ Duyên', 'sv018.studyroom@gmail.com', 'Student@123', 'student'),
+('Châu Thành Đạt', 'sv019.studyroom@gmail.com', 'Student@123', 'student'),
+('Đinh Yến Nhi', 'sv020.studyroom@gmail.com', 'Student@123', 'student');
 
 SET @admin_id = (SELECT id FROM users WHERE role = 'admin' ORDER BY id ASC LIMIT 1);
 

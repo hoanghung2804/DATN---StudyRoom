@@ -44,6 +44,34 @@ function createAuthPayload(user) {
     };
 }
 
+function validateStudentPassword(password) {
+    if (!password || password.length < 8) {
+        return "Mật khẩu sinh viên phải có tối thiểu 8 ký tự";
+    }
+
+    if (!/[A-Z]/.test(password)) {
+        return "Mật khẩu sinh viên phải có ít nhất 1 chữ viết hoa";
+    }
+
+    if (!/[^A-Za-z0-9]/.test(password)) {
+        return "Mật khẩu sinh viên phải có ít nhất 1 ký tự đặc biệt";
+    }
+
+    return "";
+}
+
+function validatePasswordByRole(password, role) {
+    if (role === "student") {
+        return validateStudentPassword(password);
+    }
+
+    if (!password || password.length < 6) {
+        return "Mật khẩu mới nên có tối thiểu 6 ký tự";
+    }
+
+    return "";
+}
+
 // NOTE: Chuc nang chinh - Dang ky tai khoan sinh vien bang email va mat khau.
 exports.register = async (req, res) => {
     try {
@@ -62,9 +90,11 @@ exports.register = async (req, res) => {
             });
         }
 
-        if (password.length < 6) {
+        const passwordError = validateStudentPassword(password);
+
+        if (passwordError) {
             return res.status(400).json({
-                message: "Mật khẩu nên có tối thiểu 6 ký tự"
+                message: passwordError
             });
         }
 
@@ -289,12 +319,6 @@ exports.forgotPassword = async (req, res) => {
         });
     }
 
-    if (newPassword.length < 6) {
-        return res.status(400).json({
-            message: "Mật khẩu mới nên có tối thiểu 6 ký tự"
-        });
-    }
-
     if (newPassword !== confirmPassword) {
         return res.status(400).json({
             message: "Mật khẩu xác nhận không khớp"
@@ -302,7 +326,7 @@ exports.forgotPassword = async (req, res) => {
     }
 
     db.query(
-        "SELECT id, fullname, email FROM users WHERE email = ?",
+        "SELECT id, fullname, email, role FROM users WHERE email = ?",
         [email],
         async (err, users) => {
             if (err) {
@@ -318,6 +342,14 @@ exports.forgotPassword = async (req, res) => {
             }
 
             const user = users[0];
+            const passwordError = validatePasswordByRole(newPassword, user.role);
+
+            if (passwordError) {
+                return res.status(400).json({
+                    message: passwordError
+                });
+            }
+
             const hashedPassword = await bcrypt.hash(newPassword, 10);
 
             db.query(
@@ -646,12 +678,6 @@ exports.changePassword = (req, res) => {
         });
     }
 
-    if (newPassword.length < 6) {
-        return res.status(400).json({
-            message: "Mật khẩu mới nên có tối thiểu 6 ký tự"
-        });
-    }
-
     db.query(
         "SELECT * FROM users WHERE id = ?",
         [req.user.id],
@@ -669,6 +695,14 @@ exports.changePassword = (req, res) => {
             }
 
             const user = result[0];
+            const passwordError = validatePasswordByRole(newPassword, user.role);
+
+            if (passwordError) {
+                return res.status(400).json({
+                    message: passwordError
+                });
+            }
+
             const isHashed =
                 typeof user.password === "string" &&
                 user.password.startsWith("$2");

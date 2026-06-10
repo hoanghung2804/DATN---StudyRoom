@@ -8,6 +8,10 @@ import {
     resetUserPassword,
     updateAdminUser
 } from "../../services/userService";
+import {
+    STUDENT_PASSWORD_HINT,
+    validateStudentPassword
+} from "../../utils/passwordPolicy";
 
 const emptyForm = {
     fullname: "",
@@ -23,6 +27,18 @@ function formatDate(value) {
 
 function getRoleLabel(role) {
     return role === "admin" ? "Quản trị viên" : "Sinh viên";
+}
+
+function validatePasswordByRole(password, role) {
+    if (role === "student") {
+        return validateStudentPassword(password);
+    }
+
+    if (!password || password.length < 6) {
+        return "Mật khẩu admin nên có tối thiểu 6 ký tự.";
+    }
+
+    return "";
 }
 
 // NOTE: Chuc nang chinh - Admin quan ly hoc sinh/admin, thong ke lich va thao tac tai khoan.
@@ -53,6 +69,13 @@ function AdminStudents() {
             reviews: students.reduce((total, user) => total + Number(user.review_count || 0), 0)
         };
     }, [users]);
+
+    const formPasswordHint = form.role === "student"
+        ? STUDENT_PASSWORD_HINT
+        : "Tài khoản admin giữ quy tắc tối thiểu 6 ký tự.";
+    const resetPasswordHint = resetTarget?.role === "student"
+        ? STUDENT_PASSWORD_HINT
+        : "Tài khoản admin giữ quy tắc tối thiểu 6 ký tự.";
 
     const showStatus = (type, text) => {
         setStatusMessage({ type, text });
@@ -144,6 +167,15 @@ function AdminStudents() {
         event.preventDefault();
 
         try {
+            if (!editing) {
+                const passwordError = validatePasswordByRole(form.password, form.role);
+
+                if (passwordError) {
+                    showStatus("danger", passwordError);
+                    return;
+                }
+            }
+
             if (editing) {
                 await updateAdminUser(editing.id, {
                     fullname: form.fullname,
@@ -169,8 +201,10 @@ function AdminStudents() {
     const handleResetPassword = async () => {
         if (!resetTarget) return;
 
-        if (!newPassword || newPassword.length < 6) {
-            showStatus("danger", "Mật khẩu mới nên có tối thiểu 6 ký tự");
+        const passwordError = validatePasswordByRole(newPassword, resetTarget.role);
+
+        if (passwordError) {
+            showStatus("danger", passwordError);
             return;
         }
 
@@ -291,9 +325,11 @@ function AdminStudents() {
                                             type="password"
                                             value={form.password}
                                             onChange={handleChange}
-                                            minLength={6}
+                                            minLength={form.role === "student" ? 8 : 6}
+                                            placeholder={form.role === "student" ? "Ví dụ: Student@123" : "Tối thiểu 6 ký tự"}
                                             required
                                         />
+                                        <div className="form-text mb-3">{formPasswordHint}</div>
                                     </>
                                 )}
 
@@ -473,7 +509,8 @@ function AdminStudents() {
                 label={`Mật khẩu mới cho ${resetTarget?.fullname || ""}`}
                 value={newPassword}
                 type="password"
-                placeholder="Tối thiểu 6 ký tự"
+                placeholder={resetTarget?.role === "student" ? "Ví dụ: Student@123" : "Tối thiểu 6 ký tự"}
+                helpText={resetPasswordHint}
                 confirmText="Reset mật khẩu"
                 loading={resetting}
                 onChange={setNewPassword}

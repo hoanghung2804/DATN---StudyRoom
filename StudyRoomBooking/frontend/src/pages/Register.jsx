@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../services/authService";
+import {
+    STUDENT_PASSWORD_HINT,
+    validateStudentPassword
+} from "../utils/passwordPolicy";
 
 function Register() {
     const navigate = useNavigate();
@@ -21,6 +25,17 @@ function Register() {
         try {
             setLoading(true);
             setMessage(null);
+
+            const passwordError = validateStudentPassword(password);
+
+            if (passwordError) {
+                setMessage({
+                    type: "danger",
+                    text: passwordError
+                });
+                return;
+            }
+
             await register({
                 fullname,
                 email,
@@ -87,11 +102,13 @@ function Register() {
                         <input
                             type="password"
                             className="form-control"
-                            placeholder="Tối thiểu 6 ký tự"
+                            placeholder="Ví dụ: Student@123"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            minLength={8}
                             required
                         />
+                        <div className="form-text text-white-50">{STUDENT_PASSWORD_HINT}</div>
                     </div>
 
                     <button className="btn btn-primary w-100" disabled={loading}>

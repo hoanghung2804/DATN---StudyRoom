@@ -6,6 +6,7 @@ function PromptModal({
     type = "text",
     textarea = false,
     placeholder,
+    helpText,
     confirmText = "Lưu",
     cancelText = "Hủy",
     loading = false,
@@ -33,6 +34,7 @@ function PromptModal({
                 ) : (
                     <input {...inputProps} type={type} />
                 )}
+                {helpText && <div className="form-text text-start">{helpText}</div>}
                 <div className="d-flex justify-content-end gap-2 mt-4">
                     <button
                         className="btn btn-outline-secondary"

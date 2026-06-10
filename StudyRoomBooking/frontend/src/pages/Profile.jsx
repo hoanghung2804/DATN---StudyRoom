@@ -8,6 +8,10 @@ import {
 } from "../services/authService";
 import { getMyBookings } from "../services/bookingService";
 import { readImageAsDataUrl } from "../utils/imageFile";
+import {
+    STUDENT_PASSWORD_HINT,
+    validateStudentPassword
+} from "../utils/passwordPolicy";
 
 const roleLabel = {
     admin: "Quản trị viên",
@@ -188,10 +192,12 @@ function Profile() {
         e.preventDefault();
         setPasswordMessage(null);
 
-        if (newPassword.length < 6) {
+        const passwordError = validateStudentPassword(newPassword);
+
+        if (passwordError) {
             setPasswordMessage({
                 type: "warning",
-                text: "Mật khẩu mới nên có tối thiểu 6 ký tự"
+                text: passwordError
             });
             return;
         }
@@ -391,7 +397,9 @@ function Profile() {
                                             className="form-control"
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
+                                            minLength={8}
                                         />
+                                        <div className="form-text">{STUDENT_PASSWORD_HINT}</div>
                                     </div>
                                     <div className="mb-3">
                                         <label className="form-label">Xác nhận mật khẩu mới</label>

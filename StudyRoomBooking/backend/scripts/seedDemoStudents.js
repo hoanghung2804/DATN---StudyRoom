@@ -102,7 +102,7 @@ const notifications = [
 
 async function main() {
     const connection = await mysql.createConnection(dbConfig);
-    const passwordHash = await bcrypt.hash("123456", 10);
+    const passwordHash = await bcrypt.hash("Student@123", 10);
     const demoEmails = students.map((student) => student[1]);
 
     try {

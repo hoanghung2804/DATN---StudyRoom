@@ -216,11 +216,7 @@ baseURL: "http://localhost:5000/api"
 
 ## 9. Tai khoan mau de dang nhap
 
-Tat ca tai khoan mau trong database dang co mat khau:
-
-```text
-123456
-```
+Tai khoan mau trong database co mat khau khac nhau theo vai tro.
 
 Tai khoan admin:
 
@@ -233,7 +229,7 @@ Tai khoan sinh vien mau:
 
 ```text
 Email: hungn28@gmail.com
-Mat khau: 123456
+Mat khau: Student@123
 ```
 
 Mot so tai khoan sinh vien co du lieu test lich dat, check-in, huy lich, tu choi, danh gia:
@@ -246,11 +242,19 @@ sv004.studyroom@gmail.com
 sv005.studyroom@gmail.com
 ```
 
-Mat khau deu la:
+Mat khau sinh vien deu la:
 
 ```text
-123456
+Student@123
 ```
+
+Quy tac mat khau sinh vien khi dang ky, doi mat khau hoac yeu cau dat lai mat khau:
+
+```text
+Toi thieu 8 ky tu, co it nhat 1 chu viet hoa va 1 ky tu dac biet.
+```
+
+Tai khoan admin van giu quy tac toi thieu 6 ky tu.
 
 ## 10. Cac chuc nang chinh
 
@@ -336,7 +340,8 @@ Kiem tra:
 Tai khoan demo mac dinh:
 
 ```text
-123456
+Admin: 123456
+Sinh vien: Student@123
 ```
 
 Neu da doi mat khau trong luc test, co the import lai `hh.sql` de reset du lieu.

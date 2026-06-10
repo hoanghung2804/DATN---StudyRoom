@@ -5,6 +5,34 @@ function normalizeRole(role) {
     return ["admin", "student"].includes(role) ? role : "student";
 }
 
+function validateStudentPassword(password) {
+    if (!password || password.length < 8) {
+        return "Mật khẩu sinh viên phải có tối thiểu 8 ký tự";
+    }
+
+    if (!/[A-Z]/.test(password)) {
+        return "Mật khẩu sinh viên phải có ít nhất 1 chữ viết hoa";
+    }
+
+    if (!/[^A-Za-z0-9]/.test(password)) {
+        return "Mật khẩu sinh viên phải có ít nhất 1 ký tự đặc biệt";
+    }
+
+    return "";
+}
+
+function validatePasswordByRole(password, role) {
+    if (role === "student") {
+        return validateStudentPassword(password);
+    }
+
+    if (!password || password.length < 6) {
+        return "Mật khẩu mới nên có tối thiểu 6 ký tự";
+    }
+
+    return "";
+}
+
 // NOTE: Chuc nang chinh - Admin xem, loc va thong ke tai khoan trong he thong.
 exports.listUsers = (req, res) => {
     const role = req.query.role;
@@ -88,13 +116,15 @@ exports.createUser = async (req, res) => {
             });
         }
 
-        if (password.length < 6) {
+        const safeRole = normalizeRole(role);
+        const passwordError = validatePasswordByRole(password, safeRole);
+
+        if (passwordError) {
             return res.status(400).json({
-                message: "Mật khẩu nên có tối thiểu 6 ký tự"
+                message: passwordError
             });
         }
 
-        const safeRole = normalizeRole(role);
         const hashedPassword = await bcrypt.hash(password, 10);
 
         db.query(
@@ -187,18 +217,42 @@ exports.resetPassword = async (req, res) => {
         const userId = Number(req.params.id);
         const { newPassword } = req.body;
 
-        if (!newPassword || newPassword.length < 6) {
+        if (!newPassword) {
             return res.status(400).json({
-                message: "Mật khẩu mới nên có tối thiểu 6 ký tự"
+                message: "Vui lòng nhập mật khẩu mới"
             });
         }
 
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-
         db.query(
-            "UPDATE users SET password = ? WHERE id = ?",
-            [hashedPassword, userId],
-            (err, result) => {
+            "SELECT id, role FROM users WHERE id = ?",
+            [userId],
+            async (findErr, users) => {
+                if (findErr) {
+                    return res.status(500).json({
+                        message: findErr.message
+                    });
+                }
+
+                if (users.length === 0) {
+                    return res.status(404).json({
+                        message: "Không tìm thấy tài khoản"
+                    });
+                }
+
+                const passwordError = validatePasswordByRole(newPassword, users[0].role);
+
+                if (passwordError) {
+                    return res.status(400).json({
+                        message: passwordError
+                    });
+                }
+
+                const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+                db.query(
+                    "UPDATE users SET password = ? WHERE id = ?",
+                    [hashedPassword, userId],
+                    (err, result) => {
                 if (err) {
                     return res.status(500).json({
                         message: err.message
@@ -214,6 +268,8 @@ exports.resetPassword = async (req, res) => {
                 return res.json({
                     message: "Đặt lại mật khẩu thành công"
                 });
+                    }
+                );
             }
         );
     } catch (error) {
