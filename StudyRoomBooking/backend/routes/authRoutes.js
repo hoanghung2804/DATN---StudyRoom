@@ -49,6 +49,13 @@ router.get(
     authController.getPasswordResetRequests
 );
 
+router.get(
+    "/admin/password-reset-requests/pending-count",
+    verifyToken,
+    isAdmin,
+    authController.getPasswordResetPendingCount
+);
+
 router.put(
     "/admin/password-reset-requests/:id/approve",
     verifyToken,

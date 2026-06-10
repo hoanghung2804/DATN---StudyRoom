@@ -421,6 +421,28 @@ exports.getPasswordResetRequests = (req, res) => {
     );
 };
 
+// NOTE: Chuc nang chinh - Dem yeu cau dat lai mat khau dang cho admin xu ly.
+exports.getPasswordResetPendingCount = (req, res) => {
+    db.query(
+        `
+            SELECT COUNT(*) AS total
+            FROM password_reset_requests
+            WHERE status = 'pending'
+        `,
+        (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    message: err.message
+                });
+            }
+
+            return res.json({
+                total: result[0]?.total || 0
+            });
+        }
+    );
+};
+
 // NOTE: Chuc nang chinh - Admin phe duyet va cap nhat mat khau moi cho sinh vien.
 exports.approvePasswordResetRequest = (req, res) => {
     const { id } = req.params;

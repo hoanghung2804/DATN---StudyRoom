@@ -27,6 +27,10 @@ export const getPasswordResetRequests = () => {
     return axiosClient.get("/auth/admin/password-reset-requests");
 };
 
+export const getPasswordResetPendingCount = () => {
+    return axiosClient.get("/auth/admin/password-reset-requests/pending-count");
+};
+
 export const approvePasswordResetRequest = (id) => {
     return axiosClient.put(`/auth/admin/password-reset-requests/${id}/approve`);
 };
