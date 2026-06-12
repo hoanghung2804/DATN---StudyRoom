@@ -119,6 +119,7 @@ frontend/.env
 Noi dung mau:
 
 ```env
+VITE_API_BASE_URL=http://localhost:5000/api
 VITE_GOOGLE_CLIENT_ID=your_google_client_id
 ```
 
@@ -126,6 +127,7 @@ Ghi chu:
 
 - `JWT_SECRET`: khoa ky token dang nhap.
 - `GOOGLE_CLIENT_ID`: dung cho dang nhap Google.
+- `VITE_API_BASE_URL`: dia chi API backend ma frontend se goi.
 - `VITE_GOOGLE_CLIENT_ID`: Client ID Google dung o frontend.
 - `ALLOWED_EMAIL_DOMAIN`: de trong neu cho moi email dang nhap Google. Neu muon chi cho email truong, dien domain, vi du `student.edu.vn`.
 
@@ -205,14 +207,10 @@ http://localhost:5000/api
 File cau hinh:
 
 ```text
-frontend/src/api/axiosClient.js
+frontend/.env
 ```
 
-Neu backend doi port, sua dong:
-
-```js
-baseURL: "http://localhost:5000/api"
-```
+Neu backend doi port, sua dong `VITE_API_BASE_URL`.
 
 ## 9. Tai khoan mau de dang nhap
 

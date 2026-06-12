@@ -5,7 +5,8 @@ import { googleLogin, login } from "../services/authService";
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const hasGoogleConfig =
     Boolean(googleClientId) &&
-    !googleClientId.startsWith("your-google-client-id");
+    !googleClientId.startsWith("your-google-client-id") &&
+    !googleClientId.startsWith("your_google_client_id");
 
 function Login() {
     const navigate = useNavigate();
