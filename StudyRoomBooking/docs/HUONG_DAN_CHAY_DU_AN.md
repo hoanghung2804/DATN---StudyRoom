@@ -43,7 +43,7 @@ Luu y: file database `hh.sql` hien dang nam ngoai thu muc `StudyRoomBooking`, o 
 C:\Users\Admin\OneDrive\Desktop\DATN\hh.sql
 ```
 
-Khi gui cho ban khac, hay gui kem file `hh.sql` nay.
+Khi gui cho nguoi khac, hay gui kem file `hh.sql` nay.
 
 Khong bat buoc gui cac thu muc sau vi co the cai lai bang `npm install`:
 
