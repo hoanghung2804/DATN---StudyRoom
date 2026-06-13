@@ -17,6 +17,8 @@ const statusLabel = {
     cancelled: "Đã hủy"
 };
 
+const CHECKIN_EARLY_MINUTES = 120;
+
 function MyBookings() {
     const [bookings, setBookings] = useState([]);
     const [checkinCodes, setCheckinCodes] = useState({});
@@ -133,6 +135,36 @@ function MyBookings() {
         return finishedAt < new Date();
     };
 
+    const getCheckinState = (booking) => {
+        if (
+            booking.status !== "approved" ||
+            booking.no_show ||
+            booking.checked_in_at ||
+            !booking.booking_date ||
+            !booking.start_time ||
+            !booking.end_time
+        ) {
+            return "hidden";
+        }
+
+        const now = new Date();
+        const startAt = new Date(`${booking.booking_date.slice(0, 10)}T${booking.start_time}`);
+        const endAt = new Date(`${booking.booking_date.slice(0, 10)}T${booking.end_time}`);
+        const earliestCheckinAt = new Date(
+            startAt.getTime() - CHECKIN_EARLY_MINUTES * 60 * 1000
+        );
+
+        if (now < earliestCheckinAt) {
+            return "too_early";
+        }
+
+        if (now > endAt) {
+            return "expired";
+        }
+
+        return "open";
+    };
+
     const handleReviewChange = (id, field, value) => {
         setReviewForms((current) => ({
             ...current,
@@ -240,6 +272,12 @@ function MyBookings() {
                                         {booking.status === "approved" && !booking.no_show ? (
                                             booking.checked_in_at ? (
                                                 <span className="badge bg-success">Đã check-in</span>
+                                            ) : getCheckinState(booking) === "too_early" ? (
+                                                <span className="badge bg-secondary">
+                                                    Check-in mở trước giờ học 2 giờ
+                                                </span>
+                                            ) : getCheckinState(booking) === "expired" ? (
+                                                <span className="badge bg-dark">Đã quá hạn check-in</span>
                                             ) : (
                                                 <div style={{ minWidth: 180 }}>
                                                     <div className="d-flex align-items-center gap-2 mb-2">

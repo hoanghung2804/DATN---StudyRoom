@@ -4,6 +4,7 @@ const OPEN_TIME = "07:00";
 const CLOSE_TIME = "21:00";
 const MAX_ADVANCE_DAYS = 14;
 const MAX_ACTIVE_BOOKINGS = 3;
+const CHECKIN_EARLY_MINUTES = 120;
 
 function notifyUser(userId, title, message) {
     const sql = `
@@ -79,6 +80,37 @@ function formatDateOnly(value) {
     const day = String(value.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
+}
+
+function getBookingDateTime(value, time) {
+    return new Date(`${formatDateOnly(value)}T${time}`);
+}
+
+function isCheckinWindowOpen(booking) {
+    const now = new Date();
+    const startAt = getBookingDateTime(booking.booking_date, booking.start_time);
+    const endAt = getBookingDateTime(booking.booking_date, booking.end_time);
+    const earliestCheckinAt = new Date(
+        startAt.getTime() - CHECKIN_EARLY_MINUTES * 60 * 1000
+    );
+
+    return now >= earliestCheckinAt && now <= endAt;
+}
+
+function hideEarlyCheckinCode(booking) {
+    if (
+        booking.status === "approved" &&
+        !booking.checked_in_at &&
+        !booking.no_show &&
+        !isCheckinWindowOpen(booking)
+    ) {
+        return {
+            ...booking,
+            checkin_code: null
+        };
+    }
+
+    return booking;
 }
 
 function refreshNoShows(callback) {
@@ -718,7 +750,7 @@ exports.getMyBookings = (req, res) => {
                 });
             }
 
-            return res.json(result);
+            return res.json(result.map(hideEarlyCheckinCode));
         });
     });
 };
@@ -820,8 +852,17 @@ exports.checkInBooking = (req, res) => {
             });
         }
 
-        const bookingDate = formatDateOnly(booking.booking_date);
-        const bookingEndAt = new Date(`${bookingDate}T${booking.end_time}`);
+        const bookingStartAt = getBookingDateTime(booking.booking_date, booking.start_time);
+        const bookingEndAt = getBookingDateTime(booking.booking_date, booking.end_time);
+        const earliestCheckinAt = new Date(
+            bookingStartAt.getTime() - CHECKIN_EARLY_MINUTES * 60 * 1000
+        );
+
+        if (new Date() < earliestCheckinAt) {
+            return res.status(400).json({
+                message: "Chi duoc check-in som toi da 2 gio truoc gio bat dau"
+            });
+        }
 
         if (booking.no_show || bookingEndAt < new Date()) {
             return res.status(400).json({
