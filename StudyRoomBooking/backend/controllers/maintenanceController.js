@@ -9,6 +9,7 @@ exports.getMaintenanceSchedules = (req, res) => {
     const sql = `
         SELECT
             maintenance_schedules.*,
+            DATE_FORMAT(maintenance_schedules.maintenance_date, '%Y-%m-%d') AS maintenance_date,
             rooms.room_name,
             users.fullname AS created_by_name
         FROM maintenance_schedules

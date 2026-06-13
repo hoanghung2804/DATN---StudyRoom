@@ -67,6 +67,20 @@ function createCheckinCode() {
     return Math.random().toString(36).slice(2, 8).toUpperCase();
 }
 
+function formatDateOnly(value) {
+    if (!value) return "";
+
+    if (typeof value === "string") {
+        return value.slice(0, 10);
+    }
+
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, "0");
+    const day = String(value.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
 function refreshNoShows(callback) {
     const sql = `
         UPDATE bookings
@@ -302,6 +316,7 @@ exports.getBookingsByUser = (req, res) => {
     const sql = `
         SELECT
             bookings.*,
+            DATE_FORMAT(bookings.booking_date, '%Y-%m-%d') AS booking_date,
             rooms.room_name,
             room_reviews.rating AS my_rating,
             room_reviews.comment AS my_review_comment,
@@ -580,6 +595,7 @@ exports.getAllBookings = (req, res) => {
         const sql = `
         SELECT
             bookings.*,
+            DATE_FORMAT(bookings.booking_date, '%Y-%m-%d') AS booking_date,
             users.fullname,
             users.email,
             rooms.room_name
@@ -681,6 +697,7 @@ exports.getMyBookings = (req, res) => {
         const sql = `
         SELECT
             bookings.*,
+            DATE_FORMAT(bookings.booking_date, '%Y-%m-%d') AS booking_date,
             rooms.room_name,
             room_reviews.rating AS my_rating,
             room_reviews.comment AS my_review_comment,
@@ -720,7 +737,7 @@ exports.getRoomSchedule = (req, res) => {
     const sql = `
         SELECT
             bookings.id,
-            bookings.booking_date,
+            DATE_FORMAT(bookings.booking_date, '%Y-%m-%d') AS booking_date,
             bookings.start_time,
             bookings.end_time,
             bookings.status,
@@ -736,7 +753,7 @@ exports.getRoomSchedule = (req, res) => {
         UNION ALL
         SELECT
             maintenance_schedules.id,
-            maintenance_schedules.maintenance_date AS booking_date,
+            DATE_FORMAT(maintenance_schedules.maintenance_date, '%Y-%m-%d') AS booking_date,
             maintenance_schedules.start_time,
             maintenance_schedules.end_time,
             maintenance_schedules.status,
@@ -803,7 +820,10 @@ exports.checkInBooking = (req, res) => {
             });
         }
 
-        if (booking.no_show || new Date(`${booking.booking_date.toISOString?.().slice(0, 10) || booking.booking_date}T${booking.end_time}`) < new Date()) {
+        const bookingDate = formatDateOnly(booking.booking_date);
+        const bookingEndAt = new Date(`${bookingDate}T${booking.end_time}`);
+
+        if (booking.no_show || bookingEndAt < new Date()) {
             return res.status(400).json({
                 message: "Lich nay da qua gio check-in"
             });
