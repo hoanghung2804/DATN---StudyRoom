@@ -601,6 +601,24 @@ exports.getAllBookings = (req, res) => {
     });
 };
 
+// NOTE: Chuc nang chinh - Dem lich dat phong dang cho admin phe duyet.
+exports.getPendingBookingCount = (req, res) => {
+    db.query(
+        "SELECT COUNT(*) AS total FROM bookings WHERE status = 'pending'",
+        (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    message: err.message
+                });
+            }
+
+            return res.json({
+                total: result[0]?.total || 0
+            });
+        }
+    );
+};
+
 // NOTE: Chuc nang chinh - Tong hop so lieu nhanh cho dashboard admin.
 exports.dashboard = (req, res) => {
     const dashboard = {};

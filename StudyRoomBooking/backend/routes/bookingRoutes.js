@@ -79,6 +79,13 @@ router.get(
     bookingController.getAllBookings
 );
 
+router.get(
+    "/admin/pending-count",
+    verifyToken,
+    isAdmin,
+    bookingController.getPendingBookingCount
+);
+
 // Dashboard thống kê
 router.get(
     "/dashboard",

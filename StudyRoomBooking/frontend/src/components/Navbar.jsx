@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getPendingBookingCount } from "../services/bookingService";
 import { getPasswordResetPendingCount } from "../services/authService";
 import { getUnreadNotificationCount } from "../services/notificationService";
 import { getAdminSupportUnreadCount } from "../services/supportService";
@@ -12,6 +13,7 @@ const roleLabel = {
 function Navbar() {
     const navigate = useNavigate();
     const [unreadCount, setUnreadCount] = useState(0);
+    const [pendingBookingCount, setPendingBookingCount] = useState(0);
     const [passwordRequestCount, setPasswordRequestCount] = useState(0);
     const [supportUnreadCount, setSupportUnreadCount] = useState(0);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -102,6 +104,36 @@ function Navbar() {
 
         let ignore = false;
 
+        const loadPendingBookingCount = () => {
+            getPendingBookingCount()
+                .then((res) => {
+                    if (!ignore) {
+                        setPendingBookingCount(res.data.total || 0);
+                    }
+                })
+                .catch(() => {
+                    if (!ignore) {
+                        setPendingBookingCount(0);
+                    }
+                });
+        };
+
+        loadPendingBookingCount();
+        const timer = window.setInterval(loadPendingBookingCount, 15000);
+
+        return () => {
+            ignore = true;
+            window.clearInterval(timer);
+        };
+    }, [userId, isAdmin]);
+
+    useEffect(() => {
+        if (!userId || !isAdmin) {
+            return;
+        }
+
+        let ignore = false;
+
         const loadPasswordRequestCount = () => {
             getPasswordResetPendingCount()
                 .then((res) => {
@@ -138,6 +170,7 @@ function Navbar() {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         setCurrentUser(null);
+        setPendingBookingCount(0);
         setPasswordRequestCount(0);
         setSupportUnreadCount(0);
         closeMenu();
@@ -192,6 +225,11 @@ function Navbar() {
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/admin/bookings" onClick={closeMenu}>
                                         Duyệt lịch
+                                        {pendingBookingCount > 0 && (
+                                            <span className="badge bg-danger ms-2">
+                                                {pendingBookingCount}
+                                            </span>
+                                        )}
                                     </Link>
                                 </li>
 

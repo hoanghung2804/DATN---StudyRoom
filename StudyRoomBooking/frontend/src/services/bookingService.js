@@ -52,6 +52,10 @@ export const getAllBookings = () => {
     return axiosClient.get("/bookings/admin/all");
 };
 
+export const getPendingBookingCount = () => {
+    return axiosClient.get("/bookings/admin/pending-count");
+};
+
 // Duyệt booking
 export const approveBooking = (id) => {
     return axiosClient.put(`/bookings/approve/${id}`);
