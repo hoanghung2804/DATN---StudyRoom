@@ -65,7 +65,11 @@ function isPastDate(bookingDate) {
 }
 
 function createCheckinCode() {
-    return Math.random().toString(36).slice(2, 8).toUpperCase();
+    const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    return Array.from({ length: 6 }, () =>
+        alphabet[Math.floor(Math.random() * alphabet.length)]
+    ).join("");
 }
 
 function formatDateOnly(value) {
@@ -80,6 +84,13 @@ function formatDateOnly(value) {
     const day = String(value.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
+}
+
+function normalizeCheckinCode(value) {
+    return String(value || "")
+        .trim()
+        .replace(/[\s-]/g, "")
+        .toUpperCase();
 }
 
 function getBookingDateTime(value, time) {
@@ -870,7 +881,16 @@ exports.checkInBooking = (req, res) => {
             });
         }
 
-        if (booking.checkin_code !== checkin_code.toUpperCase()) {
+        const storedCode = normalizeCheckinCode(booking.checkin_code);
+        const submittedCode = normalizeCheckinCode(checkin_code);
+
+        if (!storedCode) {
+            return res.status(400).json({
+                message: "Lich nay chua co ma check-in, vui long lien he admin"
+            });
+        }
+
+        if (storedCode !== submittedCode) {
             return res.status(400).json({
                 message: "Ma check-in khong dung"
             });

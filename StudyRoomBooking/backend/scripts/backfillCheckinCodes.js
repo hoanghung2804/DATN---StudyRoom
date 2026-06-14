@@ -9,7 +9,11 @@ const db = mysql.createConnection({
 });
 
 function createCode() {
-    return Math.random().toString(36).slice(2, 8).toUpperCase();
+    const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    return Array.from({ length: 6 }, () =>
+        alphabet[Math.floor(Math.random() * alphabet.length)]
+    ).join("");
 }
 
 db.query(

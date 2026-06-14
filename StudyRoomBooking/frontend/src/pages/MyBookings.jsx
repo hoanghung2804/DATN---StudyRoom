@@ -84,13 +84,19 @@ function MyBookings() {
     const handleCodeChange = (id, value) => {
         setCheckinCodes((current) => ({
             ...current,
-            [id]: value.toUpperCase()
+            [id]: value
+                .trim()
+                .replace(/[\s-]/g, "")
+                .toUpperCase()
         }));
     };
 
     const handleCheckIn = async (id) => {
         try {
-            await checkInBooking(id, checkinCodes[id] || "");
+            await checkInBooking(
+                id,
+                (checkinCodes[id] || "").trim().replace(/[\s-]/g, "")
+            );
             showToast("success", "Check-in thành công");
             await loadBookings();
         } catch (error) {
